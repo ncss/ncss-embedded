@@ -1,11 +1,8 @@
 #!/bin/bash
 
-# Copies a file to the quokka as main.py (and optionally adds all the quokka libraries).
+# Copies a file to the quokka as main.py.
 # e.g.   ./update.sh demos/buttons-display-neopixels.py
 # After copying everything, it connects the serial console so you can Ctrl-C/Ctrl-D.
-
-# For setting up a new Quokka, pass the -u flag to the script.
-# This copies all libraries and the selected file as as main.py.
 
 # Disable connecting the serial console with -n
 
@@ -32,24 +29,6 @@ fi
 
 # If using an SD card with your quokka, update this volume name
 VOL_NAME="PYBFLASH"
-
-# If the -u flag is given, update the libraries
-# Otherwise, only the main files are updated
-if [ "$1" = "-u" ]; then
-    sed "/^\W*#/d" quokka.py | sed "/^\W*$/d" > strip_quokka.py
-    sed "/^\W*#/d" boot.py | sed "/^\W*$/d" > strip_boot.py
-    $CP strip_quokka.py /$VOL_DIR/$VOL_NAME/quokka.py
-    $CP strip_boot.py /$VOL_DIR/$VOL_NAME/boot.py
-    rm strip_quokka.py strip_boot.py
-    mkdir -p /$VOL_DIR/$VOL_NAME/drivers
-    for file in drivers/*.py; do
-        file=`basename $file`
-        sed "/^\s*#/d" drivers/$file | sed "/^\s*$/d" > drivers/strip_$file
-        $CP drivers/strip_$file /$VOL_DIR/$VOL_NAME/drivers/$file
-        rm drivers/strip_$file
-    done
-    shift
-fi
 
 CONNECT_SERIAL=1
 # If the -n flag is given, remember to skip the serial console
